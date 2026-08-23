@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Serializers;
+namespace Cofa\PaymentValidator\Serializers;
 
-use Cofa12\PaymentValidator\Contracts\ValueNormalizer;
+use Cofa\PaymentValidator\Contracts\ValueNormalizer;
 
 /**
  * The conventions shared by every HMAC gateway we have met so far.

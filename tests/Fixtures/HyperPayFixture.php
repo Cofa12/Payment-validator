@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Tests\Fixtures;
+namespace Cofa\PaymentValidator\Tests\Fixtures;
 
 /** Encrypts HyperPay notifications exactly the way HyperPay's webhook sender does. */
 final class HyperPayFixture

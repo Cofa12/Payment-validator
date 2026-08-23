@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Support;
+namespace Cofa\PaymentValidator\Support;
 
 /**
  * Where in the request the gateway put its signature.

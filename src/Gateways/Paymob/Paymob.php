@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Gateways\Paymob;
+namespace Cofa\PaymentValidator\Gateways\Paymob;
 
-use Cofa12\PaymentValidator\Validators\CompositeValidator;
+use Cofa\PaymentValidator\Validators\CompositeValidator;
 
 /** Entry point for Paymob: one secret, both callback channels. */
 final class Paymob

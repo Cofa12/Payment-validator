@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Tests\Unit\Support;
+namespace Cofa\PaymentValidator\Tests\Unit\Support;
 
-use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Cofa12\PaymentValidator\Support\AesGcmDecryptor;
-use Cofa12\PaymentValidator\Tests\Fixtures\HyperPayFixture;
+use Cofa\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa\PaymentValidator\Support\AesGcmDecryptor;
+use Cofa\PaymentValidator\Tests\Fixtures\HyperPayFixture;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;

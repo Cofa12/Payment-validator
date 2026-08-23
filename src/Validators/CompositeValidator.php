@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Validators;
+namespace Cofa\PaymentValidator\Validators;
 
-use Cofa12\PaymentValidator\Contracts\SignatureValidator;
-use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Support\ValidationResult;
+use Cofa\PaymentValidator\Contracts\SignatureValidator;
+use Cofa\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\ValidationResult;
 
 /**
  * Fans one gateway name out over its several callback channels.

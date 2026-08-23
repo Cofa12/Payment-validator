@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Support;
+namespace Cofa\PaymentValidator\Support;
 
-use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa\PaymentValidator\Exceptions\InvalidConfigurationException;
 
 /**
  * AES-GCM open-and-authenticate.

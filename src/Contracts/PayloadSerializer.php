@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Contracts;
+namespace Cofa\PaymentValidator\Contracts;
 
-use Cofa12\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\Payload;
 
 /**
  * Turns a payload into the exact string a gateway signs.

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Tests\Unit\Gateways;
+namespace Cofa\PaymentValidator\Tests\Unit\Gateways;
 
-use Cofa12\PaymentValidator\Gateways\Kashier\Kashier;
-use Cofa12\PaymentValidator\Gateways\Kashier\KashierRedirectValidator;
-use Cofa12\PaymentValidator\Gateways\Kashier\KashierSignatureKeysSerializer;
-use Cofa12\PaymentValidator\Gateways\Kashier\KashierWebhookValidator;
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Tests\Fixtures\KashierFixture;
+use Cofa\PaymentValidator\Gateways\Kashier\Kashier;
+use Cofa\PaymentValidator\Gateways\Kashier\KashierRedirectValidator;
+use Cofa\PaymentValidator\Gateways\Kashier\KashierSignatureKeysSerializer;
+use Cofa\PaymentValidator\Gateways\Kashier\KashierWebhookValidator;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Tests\Fixtures\KashierFixture;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;

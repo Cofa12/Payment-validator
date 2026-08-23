@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Gateways\Kashier;
+namespace Cofa\PaymentValidator\Gateways\Kashier;
 
-use Cofa12\PaymentValidator\Validators\CompositeValidator;
+use Cofa\PaymentValidator\Validators\CompositeValidator;
 
 /** Entry point for Kashier: one API key, both callback channels. */
 final class Kashier

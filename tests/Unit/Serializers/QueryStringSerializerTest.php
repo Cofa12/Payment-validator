@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Tests\Unit\Serializers;
+namespace Cofa\PaymentValidator\Tests\Unit\Serializers;
 
-use Cofa12\PaymentValidator\Serializers\QueryStringSerializer;
-use Cofa12\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Serializers\QueryStringSerializer;
+use Cofa\PaymentValidator\Support\Payload;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

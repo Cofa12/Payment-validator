@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Gateways\EasyKash;
+namespace Cofa\PaymentValidator\Gateways\EasyKash;
 
-use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
-use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Cofa12\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Support\SignatureLocation;
-use Cofa12\PaymentValidator\Validators\AbstractHmacValidator;
+use Cofa\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\SignatureLocation;
+use Cofa\PaymentValidator\Validators\AbstractHmacValidator;
 
 /**
  * EasyKash Direct Pay webhook: HMAC-SHA256 over an ordered concatenation of

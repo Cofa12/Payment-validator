@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Exceptions;
+namespace Cofa\PaymentValidator\Exceptions;
 
-use Cofa12\PaymentValidator\Support\ValidationResult;
+use Cofa\PaymentValidator\Support\ValidationResult;
 use RuntimeException;
 
 /** Thrown by `ValidationResult::throwIfInvalid()` and `PaymentValidator::assertValid()`. */

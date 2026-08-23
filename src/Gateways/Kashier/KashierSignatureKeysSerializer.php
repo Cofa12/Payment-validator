@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Gateways\Kashier;
+namespace Cofa\PaymentValidator\Gateways\Kashier;
 
-use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
-use Cofa12\PaymentValidator\Serializers\DefaultValueNormalizer;
-use Cofa12\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa\PaymentValidator\Serializers\DefaultValueNormalizer;
+use Cofa\PaymentValidator\Support\Payload;
 
 /**
  * Kashier webhooks are self-describing: the body carries `data.signatureKeys`,

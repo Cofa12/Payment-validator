@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Gateways\HyperPay;
+namespace Cofa\PaymentValidator\Gateways\HyperPay;
 
 /** Entry point for HyperPay. */
 final class HyperPay

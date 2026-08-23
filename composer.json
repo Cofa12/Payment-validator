@@ -1,5 +1,5 @@
 {
-    "name": "cofa12/payment-validator",
+    "name": "cofa/payment-validator",
     "description": "Extensible signature/authenticity validation for payment gateway callbacks and webhooks (Paymob, EasyKash, HyperPay, Kashier, ...).",
     "keywords": ["payment", "webhook", "signature", "hmac", "paymob", "kashier", "easykash", "hyperpay"],
     "type": "library",
@@ -21,12 +21,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Cofa12\\PaymentValidator\\": "src/"
+            "Cofa\\PaymentValidator\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Cofa12\\PaymentValidator\\Tests\\": "tests/"
+            "Cofa\\PaymentValidator\\Tests\\": "tests/"
         }
     },
     "config": {

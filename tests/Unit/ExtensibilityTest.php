@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Tests\Unit;
+namespace Cofa\PaymentValidator\Tests\Unit;
 
-use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
-use Cofa12\PaymentValidator\Contracts\SignatureValidator;
-use Cofa12\PaymentValidator\Contracts\ValueNormalizer;
-use Cofa12\PaymentValidator\GatewayFactory;
-use Cofa12\PaymentValidator\PaymentValidator;
-use Cofa12\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
-use Cofa12\PaymentValidator\Serializers\RawBodySerializer;
-use Cofa12\PaymentValidator\Serializers\TemplateSerializer;
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Support\SignatureLocation;
-use Cofa12\PaymentValidator\Support\ValidationResult;
-use Cofa12\PaymentValidator\Validators\AbstractHmacValidator;
-use Cofa12\PaymentValidator\Validators\GenericHmacValidator;
+use Cofa\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa\PaymentValidator\Contracts\SignatureValidator;
+use Cofa\PaymentValidator\Contracts\ValueNormalizer;
+use Cofa\PaymentValidator\GatewayFactory;
+use Cofa\PaymentValidator\PaymentValidator;
+use Cofa\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
+use Cofa\PaymentValidator\Serializers\RawBodySerializer;
+use Cofa\PaymentValidator\Serializers\TemplateSerializer;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\SignatureLocation;
+use Cofa\PaymentValidator\Support\ValidationResult;
+use Cofa\PaymentValidator\Validators\AbstractHmacValidator;
+use Cofa\PaymentValidator\Validators\GenericHmacValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

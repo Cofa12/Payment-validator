@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator;
+namespace Cofa\PaymentValidator;
 
-use Cofa12\PaymentValidator\Contracts\SignatureValidator;
-use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Cofa12\PaymentValidator\Exceptions\UnsupportedGatewayException;
-use Cofa12\PaymentValidator\Gateways\EasyKash\EasyKash;
-use Cofa12\PaymentValidator\Gateways\HyperPay\HyperPay;
-use Cofa12\PaymentValidator\Gateways\Kashier\Kashier;
-use Cofa12\PaymentValidator\Gateways\Paymob\Paymob;
+use Cofa\PaymentValidator\Contracts\SignatureValidator;
+use Cofa\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa\PaymentValidator\Exceptions\UnsupportedGatewayException;
+use Cofa\PaymentValidator\Gateways\EasyKash\EasyKash;
+use Cofa\PaymentValidator\Gateways\HyperPay\HyperPay;
+use Cofa\PaymentValidator\Gateways\Kashier\Kashier;
+use Cofa\PaymentValidator\Gateways\Paymob\Paymob;
 
 /**
  * Builds validators from plain configuration arrays, so a host application can

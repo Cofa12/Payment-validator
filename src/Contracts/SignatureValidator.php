@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Contracts;
+namespace Cofa\PaymentValidator\Contracts;
 
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Support\ValidationResult;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\ValidationResult;
 
 /**
  * The single contract every gateway integration implements.

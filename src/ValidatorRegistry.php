@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator;
+namespace Cofa\PaymentValidator;
 
-use Cofa12\PaymentValidator\Contracts\SignatureValidator;
-use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Cofa12\PaymentValidator\Exceptions\UnsupportedGatewayException;
-use Cofa12\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Contracts\SignatureValidator;
+use Cofa\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa\PaymentValidator\Exceptions\UnsupportedGatewayException;
+use Cofa\PaymentValidator\Support\Payload;
 
 /**
  * Name → validator container.

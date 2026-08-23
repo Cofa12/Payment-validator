@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Serializers;
+namespace Cofa\PaymentValidator\Serializers;
 
-use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
-use Cofa12\PaymentValidator\Contracts\ValueNormalizer;
-use Cofa12\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa\PaymentValidator\Contracts\ValueNormalizer;
+use Cofa\PaymentValidator\Support\Payload;
 
 /**
  * "Take these fields, in this order, glued together" — the shape used by

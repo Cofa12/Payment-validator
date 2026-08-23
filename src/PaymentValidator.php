@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator;
+namespace Cofa\PaymentValidator;
 
-use Cofa12\PaymentValidator\Contracts\SignatureValidator;
-use Cofa12\PaymentValidator\Exceptions\SignatureMismatchException;
-use Cofa12\PaymentValidator\Exceptions\UnsupportedGatewayException;
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Support\ValidationResult;
+use Cofa\PaymentValidator\Contracts\SignatureValidator;
+use Cofa\PaymentValidator\Exceptions\SignatureMismatchException;
+use Cofa\PaymentValidator\Exceptions\UnsupportedGatewayException;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\ValidationResult;
 
 /**
  * The façade an application talks to.

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Validators;
+namespace Cofa\PaymentValidator\Validators;
 
-use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
-use Cofa12\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Support\SignatureLocation;
+use Cofa\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\SignatureLocation;
 
 /**
  * A complete HMAC validator with no subclassing required.

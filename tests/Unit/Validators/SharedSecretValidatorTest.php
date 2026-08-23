@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Tests\Unit\Validators;
+namespace Cofa\PaymentValidator\Tests\Unit\Validators;
 
-use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Support\SignatureLocation;
-use Cofa12\PaymentValidator\Validators\SharedSecretValidator;
+use Cofa\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\SignatureLocation;
+use Cofa\PaymentValidator\Validators\SharedSecretValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

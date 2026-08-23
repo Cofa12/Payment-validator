@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Gateways\EasyKash;
+namespace Cofa\PaymentValidator\Gateways\EasyKash;
 
-use Cofa12\PaymentValidator\Contracts\SignatureValidator;
-use Cofa12\PaymentValidator\Support\SignatureLocation;
-use Cofa12\PaymentValidator\Validators\CompositeValidator;
-use Cofa12\PaymentValidator\Validators\SharedSecretValidator;
+use Cofa\PaymentValidator\Contracts\SignatureValidator;
+use Cofa\PaymentValidator\Support\SignatureLocation;
+use Cofa\PaymentValidator\Validators\CompositeValidator;
+use Cofa\PaymentValidator\Validators\SharedSecretValidator;
 
 /** Entry point for EasyKash. */
 final class EasyKash

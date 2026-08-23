@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Gateways\Kashier;
+namespace Cofa\PaymentValidator\Gateways\Kashier;
 
-use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Support\SignatureLocation;
-use Cofa12\PaymentValidator\Support\ValidationResult;
-use Cofa12\PaymentValidator\Validators\AbstractHmacValidator;
+use Cofa\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\SignatureLocation;
+use Cofa\PaymentValidator\Support\ValidationResult;
+use Cofa\PaymentValidator\Validators\AbstractHmacValidator;
 
 /**
  * Kashier server-to-server webhook.

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Gateways\Paymob;
+namespace Cofa\PaymentValidator\Gateways\Paymob;
 
-use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
-use Cofa12\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Support\SignatureLocation;
-use Cofa12\PaymentValidator\Validators\AbstractHmacValidator;
+use Cofa\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\SignatureLocation;
+use Cofa\PaymentValidator\Validators\AbstractHmacValidator;
 
 /**
  * Paymob `TOKEN` callback HMAC — fired when a card is saved for later use.

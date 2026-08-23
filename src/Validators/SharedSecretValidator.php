@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Validators;
+namespace Cofa\PaymentValidator\Validators;
 
-use Cofa12\PaymentValidator\Contracts\SignatureValidator;
-use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Support\Secret;
-use Cofa12\PaymentValidator\Support\SignatureLocation;
-use Cofa12\PaymentValidator\Support\ValidationResult;
+use Cofa\PaymentValidator\Contracts\SignatureValidator;
+use Cofa\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\Secret;
+use Cofa\PaymentValidator\Support\SignatureLocation;
+use Cofa\PaymentValidator\Support\ValidationResult;
 
 /**
  * Constant-time comparison of a static shared secret presented in a header or

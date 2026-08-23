@@ -18,14 +18,14 @@ PHP 8.2+ with `ext-hash`, `ext-json` and `ext-openssl`.
 ## Installation
 
 ```bash
-composer require cofa12/payment-validator
+composer require cofa/payment-validator
 ```
 
 ## Quick start
 
 ```php
-use Cofa12\PaymentValidator\PaymentValidator;
-use Cofa12\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\PaymentValidator;
+use Cofa\PaymentValidator\Support\Payload;
 
 $validator = PaymentValidator::fromConfig([
     'paymob'   => ['hmac' => getenv('PAYMOB_HMAC')],
@@ -124,7 +124,7 @@ flattened, with dots that PHP rewrites to underscores) are recognised from the
 same validator.
 
 ```php
-use Cofa12\PaymentValidator\Gateways\Paymob\Paymob;
+use Cofa\PaymentValidator\Gateways\Paymob\Paymob;
 
 Paymob::validator($hmacSecret)->validate($payload);
 ```
@@ -140,7 +140,7 @@ Signed with the **payment API key**. Two channels:
   re-encoded in the order received.
 
 ```php
-use Cofa12\PaymentValidator\Gateways\Kashier\Kashier;
+use Cofa\PaymentValidator\Gateways\Kashier\Kashier;
 
 // If your redirect URL carries parameters Kashier never signed, exclude them:
 Kashier::validator($apiKey, additionalExcluded: ['lang', 'utm_source']);
@@ -178,7 +178,7 @@ chosen from the key length.
 > override it when yours differs.
 
 ```php
-use Cofa12\PaymentValidator\Gateways\EasyKash\EasyKash;
+use Cofa\PaymentValidator\Gateways\EasyKash\EasyKash;
 
 // Default set: easykashRef, Amount, Currency, PaymentMethod, productCode, status
 EasyKash::validator($secret);
@@ -218,7 +218,7 @@ the lowest-effort level that fits.
 Most gateways are "concatenate these fields, hash, compare":
 
 ```php
-use Cofa12\PaymentValidator\Validators\GenericHmacValidator;
+use Cofa\PaymentValidator\Validators\GenericHmacValidator;
 
 $validator->register('fawry', GenericHmacValidator::forFields(
     gateway: 'fawry',
@@ -241,8 +241,8 @@ Swap the serializer. Four ship with the package, and they cover most schemes:
 | `RawBodySerializer` | The untouched request body |
 
 ```php
-use Cofa12\PaymentValidator\Serializers\RawBodySerializer;
-use Cofa12\PaymentValidator\Support\SignatureLocation;
+use Cofa\PaymentValidator\Serializers\RawBodySerializer;
+use Cofa\PaymentValidator\Support\SignatureLocation;
 
 $validator->register('some-gateway', new GenericHmacValidator(
     gateway: 'some-gateway',
@@ -320,7 +320,7 @@ To drive a new gateway from `config/payments.php` like the built-in four, teach
 the factory:
 
 ```php
-use Cofa12\PaymentValidator\GatewayFactory;
+use Cofa\PaymentValidator\GatewayFactory;
 
 $factory = (new GatewayFactory())->extend('fawry', fn (array $config) =>
     GenericHmacValidator::forFields(

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Exceptions;
+namespace Cofa\PaymentValidator\Exceptions;
 
 use Throwable;
 

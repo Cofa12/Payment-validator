@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Cofa12\PaymentValidator\Tests\Unit;
+namespace Cofa\PaymentValidator\Tests\Unit;
 
-use Cofa12\PaymentValidator\Contracts\SignatureValidator;
-use Cofa12\PaymentValidator\Gateways\EasyKash\EasyKashWebhookValidator;
-use Cofa12\PaymentValidator\Gateways\Kashier\KashierWebhookValidator;
-use Cofa12\PaymentValidator\Gateways\Paymob\PaymobTransactionValidator;
-use Cofa12\PaymentValidator\PaymentValidator;
-use Cofa12\PaymentValidator\Support\Payload;
-use Cofa12\PaymentValidator\Tests\Fixtures\EasyKashFixture;
-use Cofa12\PaymentValidator\Tests\Fixtures\HyperPayFixture;
-use Cofa12\PaymentValidator\Tests\Fixtures\KashierFixture;
-use Cofa12\PaymentValidator\Tests\Fixtures\PaymobFixture;
+use Cofa\PaymentValidator\Contracts\SignatureValidator;
+use Cofa\PaymentValidator\Gateways\EasyKash\EasyKashWebhookValidator;
+use Cofa\PaymentValidator\Gateways\Kashier\KashierWebhookValidator;
+use Cofa\PaymentValidator\Gateways\Paymob\PaymobTransactionValidator;
+use Cofa\PaymentValidator\PaymentValidator;
+use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Tests\Fixtures\EasyKashFixture;
+use Cofa\PaymentValidator\Tests\Fixtures\HyperPayFixture;
+use Cofa\PaymentValidator\Tests\Fixtures\KashierFixture;
+use Cofa\PaymentValidator\Tests\Fixtures\PaymobFixture;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
