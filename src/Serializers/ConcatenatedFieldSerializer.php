@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Serializers;
+namespace Cofa12\PaymentValidator\Serializers;
 
-use Appssquare\PaymentValidator\Contracts\PayloadSerializer;
-use Appssquare\PaymentValidator\Contracts\ValueNormalizer;
-use Appssquare\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa12\PaymentValidator\Contracts\ValueNormalizer;
+use Cofa12\PaymentValidator\Support\Payload;
 
 /**
  * "Take these fields, in this order, glued together" — the shape used by

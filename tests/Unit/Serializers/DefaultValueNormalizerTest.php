@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Tests\Unit\Serializers;
+namespace Cofa12\PaymentValidator\Tests\Unit\Serializers;
 
-use Appssquare\PaymentValidator\Serializers\DefaultValueNormalizer;
+use Cofa12\PaymentValidator\Serializers\DefaultValueNormalizer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;

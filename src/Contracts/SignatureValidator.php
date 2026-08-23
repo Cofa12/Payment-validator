@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Contracts;
+namespace Cofa12\PaymentValidator\Contracts;
 
-use Appssquare\PaymentValidator\Support\Payload;
-use Appssquare\PaymentValidator\Support\ValidationResult;
+use Cofa12\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Support\ValidationResult;
 
 /**
  * The single contract every gateway integration implements.

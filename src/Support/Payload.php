@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Support;
+namespace Cofa12\PaymentValidator\Support;
 
-use Appssquare\PaymentValidator\Exceptions\InvalidPayloadException;
+use Cofa12\PaymentValidator\Exceptions\InvalidPayloadException;
 
 /**
  * Immutable representation of an inbound gateway callback.

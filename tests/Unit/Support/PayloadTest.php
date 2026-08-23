@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Tests\Unit\Support;
+namespace Cofa12\PaymentValidator\Tests\Unit\Support;
 
-use Appssquare\PaymentValidator\Exceptions\InvalidPayloadException;
-use Appssquare\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Exceptions\InvalidPayloadException;
+use Cofa12\PaymentValidator\Support\Payload;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;

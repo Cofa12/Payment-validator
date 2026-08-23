@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Tests\Unit\Registry;
+namespace Cofa12\PaymentValidator\Tests\Unit\Registry;
 
-use Appssquare\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Appssquare\PaymentValidator\Exceptions\SignatureMismatchException;
-use Appssquare\PaymentValidator\Exceptions\UnsupportedGatewayException;
-use Appssquare\PaymentValidator\GatewayFactory;
-use Appssquare\PaymentValidator\PaymentValidator;
-use Appssquare\PaymentValidator\Support\Payload;
-use Appssquare\PaymentValidator\Tests\Fixtures\EasyKashFixture;
-use Appssquare\PaymentValidator\Tests\Fixtures\HyperPayFixture;
-use Appssquare\PaymentValidator\Tests\Fixtures\KashierFixture;
-use Appssquare\PaymentValidator\Tests\Fixtures\PaymobFixture;
+use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa12\PaymentValidator\Exceptions\SignatureMismatchException;
+use Cofa12\PaymentValidator\Exceptions\UnsupportedGatewayException;
+use Cofa12\PaymentValidator\GatewayFactory;
+use Cofa12\PaymentValidator\PaymentValidator;
+use Cofa12\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Tests\Fixtures\EasyKashFixture;
+use Cofa12\PaymentValidator\Tests\Fixtures\HyperPayFixture;
+use Cofa12\PaymentValidator\Tests\Fixtures\KashierFixture;
+use Cofa12\PaymentValidator\Tests\Fixtures\PaymobFixture;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

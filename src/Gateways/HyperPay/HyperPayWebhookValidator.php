@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Gateways\HyperPay;
+namespace Cofa12\PaymentValidator\Gateways\HyperPay;
 
-use Appssquare\PaymentValidator\Contracts\SignatureValidator;
-use Appssquare\PaymentValidator\Support\AesGcmDecryptor;
-use Appssquare\PaymentValidator\Support\Payload;
-use Appssquare\PaymentValidator\Support\ValidationResult;
+use Cofa12\PaymentValidator\Contracts\SignatureValidator;
+use Cofa12\PaymentValidator\Support\AesGcmDecryptor;
+use Cofa12\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Support\ValidationResult;
 
 /**
  * HyperPay webhook authenticity.

@@ -1,5 +1,5 @@
 {
-    "name": "appssquare/payment-validator",
+    "name": "cofa12/payment-validator",
     "description": "Extensible signature/authenticity validation for payment gateway callbacks and webhooks (Paymob, EasyKash, HyperPay, Kashier, ...).",
     "keywords": ["payment", "webhook", "signature", "hmac", "paymob", "kashier", "easykash", "hyperpay"],
     "type": "library",
@@ -21,12 +21,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Appssquare\\PaymentValidator\\": "src/"
+            "Cofa12\\PaymentValidator\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Appssquare\\PaymentValidator\\Tests\\": "tests/"
+            "Cofa12\\PaymentValidator\\Tests\\": "tests/"
         }
     },
     "config": {

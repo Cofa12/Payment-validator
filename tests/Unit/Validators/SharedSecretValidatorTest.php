@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Tests\Unit\Validators;
+namespace Cofa12\PaymentValidator\Tests\Unit\Validators;
 
-use Appssquare\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Appssquare\PaymentValidator\Support\Payload;
-use Appssquare\PaymentValidator\Support\SignatureLocation;
-use Appssquare\PaymentValidator\Validators\SharedSecretValidator;
+use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa12\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Support\SignatureLocation;
+use Cofa12\PaymentValidator\Validators\SharedSecretValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

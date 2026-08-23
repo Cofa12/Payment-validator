@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Tests\Unit\Support;
+namespace Cofa12\PaymentValidator\Tests\Unit\Support;
 
-use Appssquare\PaymentValidator\Support\Secret;
+use Cofa12\PaymentValidator\Support\Secret;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

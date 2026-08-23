@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Tests\Unit\Serializers;
+namespace Cofa12\PaymentValidator\Tests\Unit\Serializers;
 
-use Appssquare\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
-use Appssquare\PaymentValidator\Serializers\DefaultValueNormalizer;
-use Appssquare\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
+use Cofa12\PaymentValidator\Serializers\DefaultValueNormalizer;
+use Cofa12\PaymentValidator\Support\Payload;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

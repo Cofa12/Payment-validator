@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Tests\Unit\Validators;
+namespace Cofa12\PaymentValidator\Tests\Unit\Validators;
 
-use Appssquare\PaymentValidator\Contracts\SignatureValidator;
-use Appssquare\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Appssquare\PaymentValidator\Support\Payload;
-use Appssquare\PaymentValidator\Support\ValidationResult;
-use Appssquare\PaymentValidator\Validators\CompositeValidator;
+use Cofa12\PaymentValidator\Contracts\SignatureValidator;
+use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa12\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Support\ValidationResult;
+use Cofa12\PaymentValidator\Validators\CompositeValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Support;
+namespace Cofa12\PaymentValidator\Support;
 
 use LogicException;
 

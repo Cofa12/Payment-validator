@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Exceptions;
+namespace Cofa12\PaymentValidator\Exceptions;
 
 use Throwable;
 

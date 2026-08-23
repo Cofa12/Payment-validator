@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Tests\Unit\Registry;
+namespace Cofa12\PaymentValidator\Tests\Unit\Registry;
 
-use Appssquare\PaymentValidator\Contracts\SignatureValidator;
-use Appssquare\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Appssquare\PaymentValidator\Exceptions\UnsupportedGatewayException;
-use Appssquare\PaymentValidator\Gateways\Paymob\Paymob;
-use Appssquare\PaymentValidator\Support\Payload;
-use Appssquare\PaymentValidator\Support\ValidationResult;
-use Appssquare\PaymentValidator\Tests\Fixtures\PaymobFixture;
-use Appssquare\PaymentValidator\ValidatorRegistry;
+use Cofa12\PaymentValidator\Contracts\SignatureValidator;
+use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa12\PaymentValidator\Exceptions\UnsupportedGatewayException;
+use Cofa12\PaymentValidator\Gateways\Paymob\Paymob;
+use Cofa12\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Support\ValidationResult;
+use Cofa12\PaymentValidator\Tests\Fixtures\PaymobFixture;
+use Cofa12\PaymentValidator\ValidatorRegistry;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;

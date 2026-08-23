@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Tests\Fixtures;
+namespace Cofa12\PaymentValidator\Tests\Fixtures;
 
 /** Kashier webhook and redirect payloads with independently computed signatures. */
 final class KashierFixture

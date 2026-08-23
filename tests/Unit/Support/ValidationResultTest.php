@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Tests\Unit\Support;
+namespace Cofa12\PaymentValidator\Tests\Unit\Support;
 
-use Appssquare\PaymentValidator\Exceptions\SignatureMismatchException;
-use Appssquare\PaymentValidator\Support\ValidationResult;
+use Cofa12\PaymentValidator\Exceptions\SignatureMismatchException;
+use Cofa12\PaymentValidator\Support\ValidationResult;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

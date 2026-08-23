@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Tests\Fixtures;
+namespace Cofa12\PaymentValidator\Tests\Fixtures;
 
 /**
  * Builds Paymob callbacks with signatures computed by hand from the published

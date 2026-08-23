@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Gateways\Kashier;
+namespace Cofa12\PaymentValidator\Gateways\Kashier;
 
-use Appssquare\PaymentValidator\Contracts\PayloadSerializer;
-use Appssquare\PaymentValidator\Serializers\DefaultValueNormalizer;
-use Appssquare\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa12\PaymentValidator\Serializers\DefaultValueNormalizer;
+use Cofa12\PaymentValidator\Support\Payload;
 
 /**
  * Kashier webhooks are self-describing: the body carries `data.signatureKeys`,

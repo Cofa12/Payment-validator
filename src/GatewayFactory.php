@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator;
+namespace Cofa12\PaymentValidator;
 
-use Appssquare\PaymentValidator\Contracts\SignatureValidator;
-use Appssquare\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Appssquare\PaymentValidator\Exceptions\UnsupportedGatewayException;
-use Appssquare\PaymentValidator\Gateways\EasyKash\EasyKash;
-use Appssquare\PaymentValidator\Gateways\HyperPay\HyperPay;
-use Appssquare\PaymentValidator\Gateways\Kashier\Kashier;
-use Appssquare\PaymentValidator\Gateways\Paymob\Paymob;
+use Cofa12\PaymentValidator\Contracts\SignatureValidator;
+use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa12\PaymentValidator\Exceptions\UnsupportedGatewayException;
+use Cofa12\PaymentValidator\Gateways\EasyKash\EasyKash;
+use Cofa12\PaymentValidator\Gateways\HyperPay\HyperPay;
+use Cofa12\PaymentValidator\Gateways\Kashier\Kashier;
+use Cofa12\PaymentValidator\Gateways\Paymob\Paymob;
 
 /**
  * Builds validators from plain configuration arrays, so a host application can

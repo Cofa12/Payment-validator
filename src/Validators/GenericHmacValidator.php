@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Validators;
+namespace Cofa12\PaymentValidator\Validators;
 
-use Appssquare\PaymentValidator\Contracts\PayloadSerializer;
-use Appssquare\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
-use Appssquare\PaymentValidator\Support\Payload;
-use Appssquare\PaymentValidator\Support\SignatureLocation;
+use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa12\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
+use Cofa12\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Support\SignatureLocation;
 
 /**
  * A complete HMAC validator with no subclassing required.

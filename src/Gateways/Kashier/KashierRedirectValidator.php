@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Gateways\Kashier;
+namespace Cofa12\PaymentValidator\Gateways\Kashier;
 
-use Appssquare\PaymentValidator\Contracts\PayloadSerializer;
-use Appssquare\PaymentValidator\Serializers\QueryStringSerializer;
-use Appssquare\PaymentValidator\Support\Payload;
-use Appssquare\PaymentValidator\Support\SignatureLocation;
-use Appssquare\PaymentValidator\Validators\AbstractHmacValidator;
+use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa12\PaymentValidator\Serializers\QueryStringSerializer;
+use Cofa12\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Support\SignatureLocation;
+use Cofa12\PaymentValidator\Validators\AbstractHmacValidator;
 
 /**
  * Kashier browser redirect (`?paymentStatus=SUCCESS&...&signature=...`).

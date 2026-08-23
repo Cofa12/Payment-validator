@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Gateways\HyperPay;
+namespace Cofa12\PaymentValidator\Gateways\HyperPay;
 
 /** Entry point for HyperPay. */
 final class HyperPay

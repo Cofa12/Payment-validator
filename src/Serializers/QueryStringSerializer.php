@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Serializers;
+namespace Cofa12\PaymentValidator\Serializers;
 
-use Appssquare\PaymentValidator\Contracts\PayloadSerializer;
-use Appssquare\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Contracts\PayloadSerializer;
+use Cofa12\PaymentValidator\Support\Payload;
 
 /**
  * Re-encodes the payload as a URL query string — the shape Kashier signs.

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Validators;
+namespace Cofa12\PaymentValidator\Validators;
 
-use Appssquare\PaymentValidator\Contracts\SignatureValidator;
-use Appssquare\PaymentValidator\Exceptions\InvalidConfigurationException;
-use Appssquare\PaymentValidator\Support\Payload;
-use Appssquare\PaymentValidator\Support\ValidationResult;
+use Cofa12\PaymentValidator\Contracts\SignatureValidator;
+use Cofa12\PaymentValidator\Exceptions\InvalidConfigurationException;
+use Cofa12\PaymentValidator\Support\Payload;
+use Cofa12\PaymentValidator\Support\ValidationResult;
 
 /**
  * Fans one gateway name out over its several callback channels.

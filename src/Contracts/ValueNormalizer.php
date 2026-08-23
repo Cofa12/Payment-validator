@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Appssquare\PaymentValidator\Contracts;
+namespace Cofa12\PaymentValidator\Contracts;
 
 /**
  * Converts a decoded payload value to its string form for signing.
