@@ -6,14 +6,19 @@ namespace Cofa\PaymentValidator\Tests\Unit;
 
 use Cofa\PaymentValidator\Contracts\SignatureValidator;
 use Cofa\PaymentValidator\Gateways\EasyKash\EasyKashWebhookValidator;
+use Cofa\PaymentValidator\Gateways\Fawry\FawryNotificationValidator;
 use Cofa\PaymentValidator\Gateways\Kashier\KashierWebhookValidator;
 use Cofa\PaymentValidator\Gateways\Paymob\PaymobTransactionValidator;
+use Cofa\PaymentValidator\Gateways\PayTabs\PayTabsReturnValidator;
 use Cofa\PaymentValidator\PaymentValidator;
 use Cofa\PaymentValidator\Support\Payload;
 use Cofa\PaymentValidator\Tests\Fixtures\EasyKashFixture;
+use Cofa\PaymentValidator\Tests\Fixtures\FawryFixture;
 use Cofa\PaymentValidator\Tests\Fixtures\HyperPayFixture;
 use Cofa\PaymentValidator\Tests\Fixtures\KashierFixture;
+use Cofa\PaymentValidator\Tests\Fixtures\PayPalFixture;
 use Cofa\PaymentValidator\Tests\Fixtures\PaymobFixture;
+use Cofa\PaymentValidator\Tests\Fixtures\PayTabsFixture;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -36,6 +41,9 @@ final class SecurityTest extends TestCase
             'kashier' => ['api_key' => KashierFixture::API_KEY],
             'easykash' => ['secret' => EasyKashFixture::SECRET],
             'hyperpay' => ['decryption_key' => HyperPayFixture::KEY],
+            'fawry' => ['secure_key' => FawryFixture::SECURE_KEY],
+            'paytabs' => ['server_key' => PayTabsFixture::SERVER_KEY],
+            'paypal' => ['webhook_id' => PayPalFixture::WEBHOOK_ID],
         ]);
     }
 
@@ -45,6 +53,8 @@ final class SecurityTest extends TestCase
         yield 'paymob' => ['paymob'];
         yield 'kashier' => ['kashier'];
         yield 'easykash' => ['easykash'];
+        yield 'fawry' => ['fawry'];
+        yield 'paytabs' => ['paytabs'];
     }
 
     /** A genuine, valid payload for the named gateway. */
@@ -54,6 +64,8 @@ final class SecurityTest extends TestCase
             'paymob' => Payload::fromArray(PaymobFixture::transactionWebhook()),
             'kashier' => Payload::fromArray(KashierFixture::webhook()),
             'easykash' => Payload::fromArray(EasyKashFixture::payload()),
+            'fawry' => Payload::fromArray(FawryFixture::notification()),
+            'paytabs' => Payload::fromArray(PayTabsFixture::returnPost()),
         };
     }
 
@@ -72,6 +84,12 @@ final class SecurityTest extends TestCase
             })(),
             'easykash' => Payload::fromArray(
                 array_replace(EasyKashFixture::payload(), ['signature' => $signature]),
+            ),
+            'fawry' => Payload::fromArray(
+                array_replace(FawryFixture::notification(), ['messageSignature' => $signature]),
+            ),
+            'paytabs' => Payload::fromArray(
+                array_replace(PayTabsFixture::returnPost(), ['signature' => $signature]),
             ),
         };
     }
@@ -165,6 +183,23 @@ final class SecurityTest extends TestCase
         }
     }
 
+    /**
+     * Every key the suite configures, so a new gateway cannot quietly opt out
+     * of the leak assertions.
+     *
+     * @return list<string>
+     */
+    private static function everySecret(): array
+    {
+        return [
+            PaymobFixture::SECRET,
+            KashierFixture::API_KEY,
+            EasyKashFixture::SECRET,
+            FawryFixture::SECURE_KEY,
+            PayTabsFixture::SERVER_KEY,
+        ];
+    }
+
     #[Test]
     public function an_exception_message_never_carries_the_secret(): void
     {
@@ -190,7 +225,7 @@ final class SecurityTest extends TestCase
         foreach ($validator->gateways() as $gateway) {
             $dumped = (string) $dump($validator->validator($gateway));
 
-            foreach ([PaymobFixture::SECRET, KashierFixture::API_KEY, EasyKashFixture::SECRET] as $secret) {
+            foreach (self::everySecret() as $secret) {
                 self::assertStringNotContainsString(
                     $secret,
                     $dumped,
@@ -243,6 +278,8 @@ final class SecurityTest extends TestCase
             'paymob' => ['hmac' => 'another-merchants-secret'],
             'kashier' => ['api_key' => 'another-merchants-secret'],
             'easykash' => ['secret' => 'another-merchants-secret'],
+            'fawry' => ['secure_key' => 'another-merchants-secret'],
+            'paytabs' => ['server_key' => 'another-merchants-secret'],
         ]);
 
         self::assertTrue($foreign->validate($gateway, self::genuinePayload($gateway))->isInvalid());
@@ -279,6 +316,8 @@ final class SecurityTest extends TestCase
             (new PaymobTransactionValidator('secret'))->validate(self::genuinePayload('paymob')),
             (new KashierWebhookValidator('secret'))->validate(self::genuinePayload('kashier')),
             (new EasyKashWebhookValidator('secret'))->validate(self::genuinePayload('easykash')),
+            (new FawryNotificationValidator('secret'))->validate(self::genuinePayload('fawry')),
+            (new PayTabsReturnValidator('secret'))->validate(self::genuinePayload('paytabs')),
         ];
 
         foreach ($algorithms as $result) {
@@ -308,6 +347,8 @@ final class SecurityTest extends TestCase
             'paymob' => (string) $payload->get('hmac'),
             'kashier' => (string) $payload->get('data.kashierSignature'),
             'easykash' => (string) $payload->get('signature'),
+            'fawry' => (string) $payload->get('messageSignature'),
+            'paytabs' => (string) $payload->get('signature'),
         };
     }
 }

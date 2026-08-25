@@ -14,12 +14,13 @@ final class InvalidConfigurationException extends InvalidArgumentException imple
         return new self(sprintf('The [%s] validator requires a non-empty secret.', $gateway));
     }
 
-    public static function unsupportedAlgorithm(string $algorithm): self
+    /** @param list<string>|null $available the algorithms the digest in question accepts */
+    public static function unsupportedAlgorithm(string $algorithm, ?array $available = null): self
     {
         return new self(sprintf(
             'Hash algorithm [%s] is not available on this system. Available: %s.',
             $algorithm,
-            implode(', ', hash_hmac_algos()),
+            implode(', ', $available ?? hash_hmac_algos()),
         ));
     }
 

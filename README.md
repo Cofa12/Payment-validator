@@ -9,7 +9,8 @@ was it altered on the way here?* This package gives that answer through one
 interface, with the per-gateway details isolated so a new gateway is usually a
 few lines of configuration rather than a new integration.
 
-Ships with **Paymob**, **EasyKash**, **HyperPay** and **Kashier**.
+Ships with **Paymob**, **Kashier**, **Fawry**, **PayTabs**, **PayPal**, **HyperPay**
+and **EasyKash** — HMAC, plain-hash, RSA and AEAD schemes alike.
 
 ## Requirements
 
@@ -32,6 +33,9 @@ $validator = PaymentValidator::fromConfig([
     'kashier'  => ['api_key' => getenv('KASHIER_API_KEY')],
     'easykash' => ['secret' => getenv('EASYKASH_SECRET')],
     'hyperpay' => ['decryption_key' => getenv('HYPERPAY_WEBHOOK_KEY')],
+    'fawry'    => ['secure_key' => getenv('FAWRY_SECURE_KEY')],
+    'paytabs'  => ['server_key' => getenv('PAYTABS_SERVER_KEY')],
+    'paypal'   => ['webhook_id' => getenv('PAYPAL_WEBHOOK_ID')],
 ]);
 
 $result = $validator->validate(
@@ -104,7 +108,8 @@ $result->toArray();            // safe to log as-is
 
 `context()` is where the useful debugging lives: `missing_fields` when a signed
 field never arrived, `channel` for the callback type that matched,
-`signature_keys` for Kashier, and the decrypted `payload` for HyperPay.
+`signature_keys` for Kashier, `cert_url` for PayPal, and the decrypted `payload`
+for HyperPay.
 
 ## The gateways
 
@@ -145,6 +150,147 @@ use Cofa\PaymentValidator\Gateways\Kashier\Kashier;
 // If your redirect URL carries parameters Kashier never signed, exclude them:
 Kashier::validator($apiKey, additionalExcluded: ['lang', 'utm_source']);
 ```
+
+### Fawry — SHA-256 with the key appended
+
+Fawry does not HMAC. It concatenates seven fields, appends your **secure key**,
+and takes a plain SHA-256 of the result, delivered as `messageSignature`:
+
+```
+SHA-256(fawryRefNumber + merchantRefNumber + paymentAmount + orderAmount
+        + orderStatus + paymentMethod + paymentRefrenceNumber + secureKey)
+```
+
+The V2 server notification and the hosted checkout's `chargeResponse` carry the
+same fields, so one validator answers for both — only the `Payload` constructor
+differs:
+
+```php
+use Cofa\PaymentValidator\Gateways\Fawry\Fawry;
+
+$fawry = Fawry::validator(getenv('FAWRY_SECURE_KEY'));
+
+$fawry->validate(Payload::fromJson($rawBody));                  // server notification
+$fawry->validate(Payload::fromQueryString($request->getQueryString()));   // return URL
+```
+
+Two details cause almost every mismatch, and both are handled for you:
+
+- **The amounts are two-decimal text.** Fawry signs `250.00`; PHP decodes the
+  JSON number `250.00` to `250.0` and renders it back as `"250"`. A
+  `DecimalAmountNormalizer` puts the decimals back before hashing.
+- **`paymentRefrenceNumber` is spelled that way by Fawry**, and is absent on
+  order-creation notifications, where it signs as empty. Both spellings are
+  accepted, as are `merchantRefNum` and `merchantRefNumber`.
+
+> **V1 notifications are deliberately not shipped.** They are
+> `md5(secureKey + …)` — a broken digest, and the key placement that invites a
+> length-extension attack. If your account is still on V1, wire it up
+> explicitly so the choice is visible in your code rather than hidden in a
+> dependency:
+>
+> ```php
+> use Cofa\PaymentValidator\Support\SecretPlacement;
+> use Cofa\PaymentValidator\Validators\GenericHashValidator;
+>
+> $validator->register('fawry', GenericHashValidator::forFields(
+>     gateway: 'fawry',
+>     secret: getenv('FAWRY_SECURE_KEY'),
+>     fields: ['amount', 'fawryRefNumber', 'merchantRefNumber', 'orderStatus'],
+>     signatureField: 'messageSignature',
+>     algorithm: 'md5',
+>     secretPlacement: SecretPlacement::Prepend,
+> ));
+> ```
+>
+> Then ask Fawry to move you to V2.
+
+### PayTabs — HMAC-SHA256
+
+Signed with the profile **Server Key** (not the Client Key). The two channels
+sign quite different things, and are routed automatically:
+
+- **`callback`** — the server-to-server IPN. HMAC over the *entire raw body*,
+  with the result in a `signature` header. The body must reach the validator
+  byte for byte, so use `Payload::fromJson($request->getContent(), $headers)`;
+  a decoded-and-re-encoded array will not reproduce the digest.
+- **`return`** — the browser form POST. PayTabs drops `signature`, drops falsy
+  values, sorts the rest by key, URL-encodes and hashes that.
+
+```php
+use Cofa\PaymentValidator\Gateways\PayTabs\PayTabs;
+
+PayTabs::validator(getenv('PAYTABS_SERVER_KEY'));
+
+// If your return URL carries parameters PayTabs never signed:
+PayTabs::validator($serverKey, additionalExcluded: ['lang', 'utm_source']);
+```
+
+The "drop falsy values" step is PayTabs' own `array_filter()`, which removes
+`""`, `0` **and the string `"0"`**. Surprising as a general rule, but it is the
+rule the gateway signs by, so the package reproduces it rather than improving
+on it.
+
+### PayPal — RSA-SHA256, verified locally
+
+PayPal signs asymmetrically: there is no shared secret, only a public
+certificate to check against. What it signs is four pipe-joined parts —
+
+```
+PAYPAL-TRANSMISSION-ID | PAYPAL-TRANSMISSION-TIME | webhookId | crc32(rawBody)
+```
+
+— with `PAYPAL-TRANSMISSION-SIG` holding the RSA-SHA256 signature over that
+string, under the certificate named by `PAYPAL-CERT-URL`.
+
+```php
+use Cofa\PaymentValidator\Gateways\PayPal\PayPal;
+
+PayPal::validator(getenv('PAYPAL_WEBHOOK_ID'));
+```
+
+The `webhookId` is the subscription ID from the developer dashboard, and it must
+be the one for *this* endpoint — it is inside the signed message, so a webhook
+minted for another subscription cannot be replayed against yours. It is an
+identifier rather than a secret.
+
+Verifying here rather than calling PayPal's `verify-webhook-signature` endpoint
+is what PayPal itself recommends: no extra round trip on the webhook path, no
+API credentials needed to check a signature, and no outage in your handler when
+that endpoint is slow.
+
+Two things to know:
+
+- **The raw body must survive intact**, because the checksum is `crc32()` over
+  the exact bytes PayPal sent. Decoding and re-encoding the JSON changes how
+  slashes and numbers are rendered, and verification fails on a webhook that was
+  never tampered with.
+- **The certificate URL is untrusted input** — it arrives inside the very
+  request you are verifying. It is resolved through a `CertificateResolver`
+  that refuses any host outside an allow-list (`paypal.com` and its subdomains,
+  covering sandbox), rejects non-HTTPS URLs, and does not follow redirects. See
+  [Security notes](#security-notes) for why that check carries the whole scheme.
+
+Supply your own resolver to add caching, use your HTTP client, or pin the
+certificate so the webhook path makes no outbound request at all:
+
+```php
+use Cofa\PaymentValidator\Support\RemoteCertificateResolver;
+
+PayPal::validator($webhookId, new RemoteCertificateResolver(
+    allowedHosts: ['paypal.com'],
+    fetcher: fn (string $url): ?string => $cache->remember($url, 86400,
+        fn () => $httpClient->get($url)->body()),
+));
+```
+
+Anything implementing `CertificateResolver` works; returning `null` means "do
+not trust this request".
+
+PayPal's legacy **IPN** is not covered. It is not a signature scheme — you post
+the message back to PayPal and wait for `VERIFIED` — so it needs an HTTP round
+trip against PayPal rather than a local check. Use PayPal's own IPN listener
+guidance for that, or move the integration to REST webhooks.
 
 ### HyperPay — AES-256-GCM
 
@@ -220,12 +366,29 @@ Most gateways are "concatenate these fields, hash, compare":
 ```php
 use Cofa\PaymentValidator\Validators\GenericHmacValidator;
 
-$validator->register('fawry', GenericHmacValidator::forFields(
-    gateway: 'fawry',
-    secret: getenv('FAWRY_SECRET'),
-    fields: ['merchantRefNumber', 'orderAmount', 'orderStatus'],
-    signatureField: 'messageSignature',
+$validator->register('acmepay', GenericHmacValidator::forFields(
+    gateway: 'acmepay',
+    secret: getenv('ACMEPAY_SECRET'),
+    fields: ['merchantRef', 'orderAmount', 'orderStatus'],
+    signatureField: 'checksum',
     algorithm: 'sha256',
+));
+```
+
+If the gateway hashes the key into the message instead of HMACing it — anything
+whose docs read `SHA-256(fields… + secretKey)`, as Fawry's does — reach for
+`GenericHashValidator`, which takes the same arguments plus where the key goes:
+
+```php
+use Cofa\PaymentValidator\Support\SecretPlacement;
+use Cofa\PaymentValidator\Validators\GenericHashValidator;
+
+$validator->register('acmepay', GenericHashValidator::forFields(
+    gateway: 'acmepay',
+    secret: getenv('ACMEPAY_SECRET'),
+    fields: ['merchantRef', 'orderAmount'],
+    signatureField: 'checksum',
+    secretPlacement: SecretPlacement::Append,   // or Prepend
 ));
 ```
 
@@ -236,7 +399,7 @@ Swap the serializer. Four ship with the package, and they cover most schemes:
 | Serializer | Signs |
 | --- | --- |
 | `ConcatenatedFieldSerializer` | Named fields in order, optional glue, alias and case-insensitive lookup |
-| `QueryStringSerializer` | The payload re-encoded as a query string |
+| `QueryStringSerializer` | The payload re-encoded as a query string, optionally sorted and empties dropped |
 | `TemplateSerializer` | A literal formula: `"/?payment={merchantId}.{orderId}.{amount}"` |
 | `RawBodySerializer` | The untouched request body |
 
@@ -260,11 +423,24 @@ once (`firstOf()`), and anything stranger (`custom()`).
 ### 3. A different value format
 
 Gateways disagree on how values become strings — `true` vs `1` vs `Y`, how many
-decimal places an amount carries. Implement `ValueNormalizer` and pass it to the
-serializer:
+decimal places an amount carries. Two normalizers ship with the package:
+
+| Normalizer | Does |
+| --- | --- |
+| `DefaultValueNormalizer` | JSON spellings: `true`/`false`, `null` as empty. `numericBooleans()` switches to `1`/`0` |
+| `DecimalAmountNormalizer` | Re-imposes fixed decimals on named money fields, so `250.0` signs as `250.00` |
+
+Both are injected, so a gateway that disagrees needs your own `ValueNormalizer`
+rather than a fork:
 
 ```php
 new ConcatenatedFieldSerializer(['amount', 'paid'], ':', $yourNormalizer);
+
+// Or wrap one: amounts to two decimals, everything else the default way.
+new ConcatenatedFieldSerializer(
+    fields: ['ref', 'amount'],
+    normalizer: new DecimalAmountNormalizer(['amount']),
+);
 ```
 
 ### 4. A recipe of your own
@@ -296,8 +472,9 @@ final class MyGatewayValidator extends AbstractHmacValidator
 
 ### 5. Not an HMAC at all
 
-Implement `SignatureValidator` directly — three methods. HyperPay does exactly
-this.
+Implement `SignatureValidator` directly — three methods. HyperPay does this for
+AEAD decryption, and PayPal for public-key verification; neither has a signing
+string to rebuild, so neither fits the template.
 
 ### Several callback types under one name
 
@@ -316,17 +493,17 @@ a weakening.
 
 ### Config-driven registration
 
-To drive a new gateway from `config/payments.php` like the built-in four, teach
+To drive a new gateway from `config/payments.php` like the built-in ones, teach
 the factory:
 
 ```php
 use Cofa\PaymentValidator\GatewayFactory;
 
-$factory = (new GatewayFactory())->extend('fawry', fn (array $config) =>
+$factory = (new GatewayFactory())->extend('acmepay', fn (array $config) =>
     GenericHmacValidator::forFields(
-        gateway: 'fawry',
+        gateway: 'acmepay',
         secret: $config['secret'],
-        fields: ['merchantRefNumber', 'orderAmount'],
+        fields: ['merchantRef', 'orderAmount'],
     ));
 
 $validator = PaymentValidator::fromConfig($config, $factory);
@@ -351,8 +528,16 @@ if ($gateway === null || $validator->validate($gateway, $payload)->isInvalid()) 
 }
 ```
 
-Convenient, but it resolves every registered gateway to ask. Route per gateway
-when you can.
+Convenient, but it resolves every registered gateway to ask, and it returns the
+first one that *recognises* the payload rather than the one that verifies. Route
+per gateway when you can.
+
+That distinction matters where two gateways sign a similarly shaped payload.
+Kashier's redirect claims any payload with a `signature` field, so a PayTabs
+return would be handed to Kashier and rejected. PayTabs' return channel narrows
+itself by also requiring `tranRef` or `cartId`, but the general point stands: a
+shared endpoint is a convenience, and per-gateway routes are what you want in
+production.
 
 ## Security notes
 
@@ -370,6 +555,20 @@ when you can.
   invalid result, not an exception. Only configuration errors raise.
 - **An unknown gateway name raises** rather than returning "invalid", so a typo
   in configuration cannot masquerade as a rejected payment.
+- **A certificate URL from the request is treated as hostile.** PayPal names its
+  signing certificate in a header of the message being verified. An attacker who
+  could choose that URL would host their own certificate, sign a forged webhook
+  with the matching private key, and pass every check — so
+  `RemoteCertificateResolver` refuses any host outside its allow-list before a
+  connection is opened, requires HTTPS, and does not follow redirects. That last
+  point is not decoration: a redirect from an allow-listed host would otherwise
+  lead straight back out of the allow-list. It also closes the obvious SSRF —
+  without the check, a webhook endpoint is a "fetch any URL for me" service
+  aimed at your internal network.
+- **Weak-by-design schemes are labelled, not hidden.** Fawry hashes rather than
+  HMACs; the package validates that faithfully but says so, and refuses to ship
+  the MD5-with-prepended-key V1 variant as a default. `SecretPlacement::Prepend`
+  carries the length-extension warning where you will read it.
 - **Validation is not authorisation.** A valid signature proves origin and
   integrity, nothing else. Still check the amount, currency and status against
   your own order, and make the handler idempotent — gateways retry, and a
@@ -379,9 +578,14 @@ when you can.
 
 Gateways sign the text they sent. If a gateway sends `"amount": 100.00` as a
 JSON number, PHP decodes it to `100.0` and re-renders it as `"100"`, which will
-not reproduce the signature. Where this bites, either sign the raw body
-(`RawBodySerializer`) or supply a `ValueNormalizer` that formats the value the
-way the gateway does. None of the four built-in gateways are affected.
+not reproduce the signature.
+
+Fawry is the built-in gateway this bites, and it is handled — a
+`DecimalAmountNormalizer` restores the two decimals its recipe specifies. For a
+gateway of your own, the same three options apply: sign the raw body
+(`RawBodySerializer`), name the money fields
+(`new DecimalAmountNormalizer(['amount'])`), or write a `ValueNormalizer` that
+formats values exactly the way the gateway does.
 
 ## Testing
 
@@ -393,12 +597,16 @@ composer test
 XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text
 ```
 
-314 unit tests cover the four gateways against signatures computed independently
-from each gateway's published recipe — so the tests check the implementation
-against the spec, not against itself. Alongside the happy paths they assert that
-tampering with any signed field is caught, that a wrong secret is rejected, that
-truncated, extended, type-juggled and non-string signatures are refused, and
+465 unit tests cover the seven gateways against signatures computed
+independently from each gateway's published recipe — so the tests check the
+implementation against the spec, not against itself. Alongside the happy paths
+they assert that tampering with any signed field is caught, that a wrong secret
+is rejected, that truncated, extended, type-juggled and non-string signatures are
+refused, that PayPal refuses a certificate URL pointed anywhere but PayPal, and
 that no secret reaches a log, a dump or a stack trace.
+
+No test touches the network: PayPal's certificates are generated in-process, and
+the default HTTPS transport is exercised through a substituted stream wrapper.
 
 ## Continuous integration
 

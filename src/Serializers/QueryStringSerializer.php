@@ -8,10 +8,18 @@ use Cofa\PaymentValidator\Contracts\PayloadSerializer;
 use Cofa\PaymentValidator\Support\Payload;
 
 /**
- * Re-encodes the payload as a URL query string — the shape Kashier signs.
+ * Re-encodes the payload as a URL query string — the shape Kashier and PayTabs
+ * sign.
  *
  * The signature field itself (and any parameter the gateway adds after signing)
  * must be excluded, otherwise the string can never reproduce.
+ *
+ * `dropEmpty` reproduces a bare `array_filter()`, which is what PayTabs' own
+ * reference implementation runs before hashing. That drops `""`, `null`,
+ * `false`, `0` *and the string `"0"`* — surprising as a general rule, but it is
+ * the rule the gateway signs by, so matching it exactly is the point. It
+ * applies to top-level keys only, and is ignored in `only` mode, where every
+ * requested key must appear so that a removed field changes the string.
  */
 final class QueryStringSerializer implements PayloadSerializer
 {
@@ -22,8 +30,9 @@ final class QueryStringSerializer implements PayloadSerializer
     private readonly ?array $only;
 
     /**
-     * @param list<string>      $exclude keys dropped before encoding
-     * @param list<string>|null $only    when set, the exact keys to encode, in this order
+     * @param list<string>      $exclude   keys dropped before encoding
+     * @param list<string>|null $only      when set, the exact keys to encode, in this order
+     * @param bool              $dropEmpty drop falsy top-level values, PayTabs style; see below
      */
     public function __construct(
         array $exclude = [],
@@ -31,6 +40,7 @@ final class QueryStringSerializer implements PayloadSerializer
         private readonly bool $sortKeys = false,
         private readonly string $prefix = '',
         private readonly int $encoding = PHP_QUERY_RFC1738,
+        private readonly bool $dropEmpty = false,
     ) {
         $this->exclude = array_values($exclude);
         $this->only = $only === null ? null : array_values($only);
@@ -53,6 +63,10 @@ final class QueryStringSerializer implements PayloadSerializer
         } else {
             foreach ($this->exclude as $key) {
                 unset($data[$key]);
+            }
+
+            if ($this->dropEmpty) {
+                $data = array_filter($data);
             }
 
             if ($this->sortKeys) {

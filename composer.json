@@ -1,7 +1,7 @@
 {
     "name": "cofa/payment-validator",
-    "description": "Extensible signature/authenticity validation for payment gateway callbacks and webhooks (Paymob, EasyKash, HyperPay, Kashier, ...).",
-    "keywords": ["payment", "webhook", "signature", "hmac", "paymob", "kashier", "easykash", "hyperpay"],
+    "description": "Extensible signature/authenticity validation for payment gateway callbacks and webhooks (Paymob, EasyKash, HyperPay, Kashier, Fawry, PayTabs, PayPal, ...).",
+    "keywords": ["payment", "webhook", "signature", "hmac", "paymob", "kashier", "easykash", "hyperpay", "fawry", "paytabs", "paypal"],
     "type": "library",
     "license": "MIT",
     "authors": [

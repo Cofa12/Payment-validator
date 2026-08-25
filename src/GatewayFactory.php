@@ -8,9 +8,13 @@ use Cofa\PaymentValidator\Contracts\SignatureValidator;
 use Cofa\PaymentValidator\Exceptions\InvalidConfigurationException;
 use Cofa\PaymentValidator\Exceptions\UnsupportedGatewayException;
 use Cofa\PaymentValidator\Gateways\EasyKash\EasyKash;
+use Cofa\PaymentValidator\Gateways\Fawry\Fawry;
 use Cofa\PaymentValidator\Gateways\HyperPay\HyperPay;
 use Cofa\PaymentValidator\Gateways\Kashier\Kashier;
 use Cofa\PaymentValidator\Gateways\Paymob\Paymob;
+use Cofa\PaymentValidator\Gateways\PayPal\PayPal;
+use Cofa\PaymentValidator\Gateways\PayTabs\PayTabs;
+use Cofa\PaymentValidator\Support\RemoteCertificateResolver;
 
 /**
  * Builds validators from plain configuration arrays, so a host application can
@@ -73,16 +77,16 @@ final class GatewayFactory
     private function registerDefaults(): void
     {
         $this->extend(Paymob::GATEWAY, static fn (array $c): SignatureValidator => Paymob::validator(
-            self::secret($c, ['hmac', 'hmac_secret', 'secret', 'key'], Paymob::GATEWAY),
+            self::required($c, ['hmac', 'hmac_secret', 'secret', 'key'], Paymob::GATEWAY),
         ));
 
         $this->extend(Kashier::GATEWAY, static fn (array $c): SignatureValidator => Kashier::validator(
-            self::secret($c, ['api_key', 'apiKey', 'payment_api_key', 'secret', 'key'], Kashier::GATEWAY),
+            self::required($c, ['api_key', 'apiKey', 'payment_api_key', 'secret', 'key'], Kashier::GATEWAY),
             self::stringList($c, ['exclude', 'additional_excluded']),
         ));
 
         $this->extend(EasyKash::GATEWAY, static function (array $c): SignatureValidator {
-            $secret = self::secret($c, ['secret', 'secret_key', 'api_secret', 'key'], EasyKash::GATEWAY);
+            $secret = self::required($c, ['secret', 'secret_key', 'api_secret', 'key'], EasyKash::GATEWAY);
             $fields = self::stringList($c, ['fields', 'signed_fields']) ?: null;
 
             $apiKey = self::optionalString($c, ['api_key', 'apiKey']);
@@ -98,15 +102,37 @@ final class GatewayFactory
         });
 
         $this->extend(HyperPay::GATEWAY, static fn (array $c): SignatureValidator => HyperPay::validator(
-            self::secret($c, ['decryption_key', 'webhook_key', 'key', 'secret'], HyperPay::GATEWAY),
+            self::required($c, ['decryption_key', 'webhook_key', 'key', 'secret'], HyperPay::GATEWAY),
         ));
+
+        $this->extend(Fawry::GATEWAY, static fn (array $c): SignatureValidator => Fawry::validator(
+            self::required($c, ['secure_key', 'secureKey', 'secret', 'key'], Fawry::GATEWAY),
+        ));
+
+        $this->extend(PayTabs::GATEWAY, static fn (array $c): SignatureValidator => PayTabs::validator(
+            self::required($c, ['server_key', 'serverKey', 'secret', 'key'], PayTabs::GATEWAY),
+            self::stringList($c, ['exclude', 'additional_excluded']),
+        ));
+
+        $this->extend(PayPal::GATEWAY, static function (array $c): SignatureValidator {
+            $webhookId = self::required($c, ['webhook_id', 'webhookId', 'id'], PayPal::GATEWAY);
+            $hosts = self::stringList($c, ['cert_hosts', 'certificate_hosts']);
+
+            return PayPal::validator(
+                $webhookId,
+                $hosts === [] ? null : new RemoteCertificateResolver($hosts),
+            );
+        });
     }
 
     /**
+     * A config value the gateway cannot be built without — usually a key, but
+     * PayPal's is an identifier.
+     *
      * @param array<string, mixed> $config
      * @param list<string>         $keys
      */
-    private static function secret(array $config, array $keys, string $gateway): string
+    private static function required(array $config, array $keys, string $gateway): string
     {
         $value = self::optionalString($config, $keys);
 

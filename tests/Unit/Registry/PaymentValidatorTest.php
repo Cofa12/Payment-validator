@@ -10,10 +10,14 @@ use Cofa\PaymentValidator\Exceptions\UnsupportedGatewayException;
 use Cofa\PaymentValidator\GatewayFactory;
 use Cofa\PaymentValidator\PaymentValidator;
 use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\RemoteCertificateResolver;
 use Cofa\PaymentValidator\Tests\Fixtures\EasyKashFixture;
+use Cofa\PaymentValidator\Tests\Fixtures\FawryFixture;
 use Cofa\PaymentValidator\Tests\Fixtures\HyperPayFixture;
 use Cofa\PaymentValidator\Tests\Fixtures\KashierFixture;
+use Cofa\PaymentValidator\Tests\Fixtures\PayPalFixture;
 use Cofa\PaymentValidator\Tests\Fixtures\PaymobFixture;
+use Cofa\PaymentValidator\Tests\Fixtures\PayTabsFixture;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -163,6 +167,24 @@ final class PaymentValidatorTest extends TestCase
     }
 
     #[Test]
+    public function it_detects_the_new_gateways_by_their_own_markers(): void
+    {
+        $validator = PaymentValidator::fromConfig([
+            'fawry' => ['secure_key' => FawryFixture::SECURE_KEY],
+            'paytabs' => ['server_key' => PayTabsFixture::SERVER_KEY],
+            'paypal' => ['webhook_id' => PayPalFixture::WEBHOOK_ID],
+        ]);
+
+        $callback = PayTabsFixture::callback();
+        $webhook = PayPalFixture::webhook();
+
+        self::assertSame('fawry', $validator->detect(FawryFixture::notification()));
+        self::assertSame('paytabs', $validator->detect(PayTabsFixture::returnPost()));
+        self::assertSame('paytabs', $validator->detect($callback['body'], $callback['headers']));
+        self::assertSame('paypal', $validator->detect($webhook['body'], $webhook['headers']));
+    }
+
+    #[Test]
     public function config_keys_have_forgiving_aliases(): void
     {
         $validator = PaymentValidator::fromConfig([
@@ -170,11 +192,106 @@ final class PaymentValidatorTest extends TestCase
             'kashier' => ['payment_api_key' => KashierFixture::API_KEY],
             'easykash' => ['secret_key' => EasyKashFixture::SECRET],
             'hyperpay' => ['webhook_key' => HyperPayFixture::KEY],
+            'fawry' => ['secureKey' => FawryFixture::SECURE_KEY],
+            'paytabs' => ['serverKey' => PayTabsFixture::SERVER_KEY],
         ]);
 
         self::assertTrue($validator->isValid('paymob', PaymobFixture::transactionWebhook()));
         self::assertTrue($validator->isValid('kashier', KashierFixture::webhook()));
         self::assertTrue($validator->isValid('easykash', EasyKashFixture::payload()));
+        self::assertTrue($validator->isValid('fawry', FawryFixture::notification()));
+        self::assertTrue($validator->isValid('paytabs', PayTabsFixture::returnPost()));
+    }
+
+    #[Test]
+    public function it_validates_a_fawry_notification_end_to_end(): void
+    {
+        $validator = PaymentValidator::fromConfig(['fawry' => ['secure_key' => FawryFixture::SECURE_KEY]]);
+        $json = json_encode(FawryFixture::notification(), JSON_THROW_ON_ERROR);
+
+        self::assertTrue($validator->validate('fawry', Payload::fromJson($json))->isValid());
+        self::assertTrue($validator->validate('fawry', Payload::fromQueryString(
+            FawryFixture::redirectQueryString(),
+        ))->isValid());
+    }
+
+    #[Test]
+    public function it_validates_both_paytabs_channels_end_to_end(): void
+    {
+        $validator = PaymentValidator::fromConfig(['paytabs' => ['server_key' => PayTabsFixture::SERVER_KEY]]);
+        $callback = PayTabsFixture::callback();
+
+        $ipn = $validator->validate('paytabs', $callback['body'], $callback['headers']);
+
+        self::assertTrue($ipn->isValid(), (string) $ipn->reason());
+        self::assertSame('callback', $ipn->contextValue('channel'));
+
+        $return = $validator->validate('paytabs', PayTabsFixture::returnPost());
+
+        self::assertTrue($return->isValid(), (string) $return->reason());
+        self::assertSame('return', $return->contextValue('channel'));
+    }
+
+    #[Test]
+    public function it_validates_a_paypal_webhook_end_to_end(): void
+    {
+        // The certificate resolver is the one piece PayPal needs beyond config,
+        // so it is registered directly rather than through the factory.
+        $webhook = PayPalFixture::webhook();
+        $validator = PaymentValidator::fromConfig([])->register(
+            'paypal',
+            static fn () => \Cofa\PaymentValidator\Gateways\PayPal\PayPal::validator(
+                PayPalFixture::WEBHOOK_ID,
+                new RemoteCertificateResolver(['paypal.com'], PayPalFixture::certificateFetcher()),
+            ),
+        );
+
+        $result = $validator->validate('paypal', $webhook['body'], $webhook['headers']);
+
+        self::assertTrue($result->isValid(), (string) $result->reason());
+    }
+
+    #[Test]
+    public function paypal_is_configured_by_webhook_id_and_optional_certificate_hosts(): void
+    {
+        $validator = PaymentValidator::fromConfig([
+            'paypal' => ['webhook_id' => PayPalFixture::WEBHOOK_ID, 'cert_hosts' => ['paypal.com']],
+        ]);
+
+        self::assertTrue($validator->has('paypal'));
+
+        // A foreign certificate URL is refused without a connection being opened.
+        $webhook = PayPalFixture::webhook(certUrl: 'https://evil.example/certs/CERT-1');
+        $result = $validator->validate('paypal', $webhook['body'], $webhook['headers']);
+
+        self::assertTrue($result->isInvalid());
+        self::assertStringContainsString('not an allowed PayPal host', (string) $result->reason());
+    }
+
+    #[Test]
+    public function paypal_reports_a_missing_webhook_id_as_a_configuration_error(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('webhook_id');
+
+        PaymentValidator::fromConfig(['paypal' => ['secret' => 'not-a-webhook-id']])->validator('paypal');
+    }
+
+    #[Test]
+    public function paytabs_return_exclusions_can_be_configured(): void
+    {
+        $post = PayTabsFixture::returnPost(unsignedExtras: ['lang' => 'ar']);
+
+        self::assertFalse(
+            PaymentValidator::fromConfig(['paytabs' => ['server_key' => PayTabsFixture::SERVER_KEY]])
+                ->isValid('paytabs', $post),
+        );
+
+        self::assertTrue(
+            PaymentValidator::fromConfig([
+                'paytabs' => ['server_key' => PayTabsFixture::SERVER_KEY, 'exclude' => ['lang']],
+            ])->isValid('paytabs', $post),
+        );
     }
 
     #[Test]
@@ -228,7 +345,10 @@ final class PaymentValidatorTest extends TestCase
     #[Test]
     public function the_gateway_factory_lists_what_it_can_build(): void
     {
-        self::assertSame(['easykash', 'hyperpay', 'kashier', 'paymob'], (new GatewayFactory())->supported());
+        self::assertSame(
+            ['easykash', 'fawry', 'hyperpay', 'kashier', 'paymob', 'paypal', 'paytabs'],
+            (new GatewayFactory())->supported(),
+        );
         self::assertTrue((new GatewayFactory())->supports('PAYMOB'));
         self::assertFalse((new GatewayFactory())->supports('stripe'));
     }

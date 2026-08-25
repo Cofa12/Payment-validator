@@ -7,27 +7,27 @@ namespace Cofa\PaymentValidator\Validators;
 use Cofa\PaymentValidator\Contracts\PayloadSerializer;
 use Cofa\PaymentValidator\Serializers\ConcatenatedFieldSerializer;
 use Cofa\PaymentValidator\Support\Payload;
+use Cofa\PaymentValidator\Support\SecretPlacement;
 use Cofa\PaymentValidator\Support\SignatureLocation;
 
 /**
- * A complete HMAC validator with no subclassing required.
+ * A complete plain-hash validator with no subclassing required — the
+ * {@see GenericHmacValidator} of gateways that concatenate the key instead of
+ * HMACing it.
  *
- * This is the answer to "how do I add gateway N+1?": most gateways are fully
- * described by a field list, an algorithm and where the signature sits, so they
- * need configuration rather than code.
+ * This is what makes a legacy scheme a configuration entry rather than a fork.
+ * Fawry's V1 notification, for instance, is `md5(secureKey . amount . …)`:
  *
- *     $registry->register('acmepay', new GenericHmacValidator(
- *         gateway: 'acmepay',
- *         secret: $secret,
- *         serializer: new ConcatenatedFieldSerializer(['merchantRef', 'orderAmount']),
- *         signatureLocation: SignatureLocation::field('checksum'),
- *         algorithm: 'sha256',
+ *     $registry->register('fawry-v1', GenericHashValidator::forFields(
+ *         gateway: 'fawry-v1',
+ *         secret: $secureKey,
+ *         fields: ['amount', 'fawryRefNumber', 'merchantRefNumber', 'orderStatus'],
+ *         signatureField: 'messageSignature',
+ *         algorithm: 'md5',
+ *         secretPlacement: SecretPlacement::Prepend,
  *     ));
- *
- * Gateways that hash the key into the message instead of HMACing it have the
- * same shortcut in {@see GenericHashValidator}.
  */
-class GenericHmacValidator extends AbstractHmacValidator
+class GenericHashValidator extends AbstractHashValidator
 {
     private readonly string $gateway;
 
@@ -41,12 +41,13 @@ class GenericHmacValidator extends AbstractHmacValidator
         PayloadSerializer $serializer,
         SignatureLocation $signatureLocation,
         string $algorithm = 'sha256',
+        SecretPlacement $secretPlacement = SecretPlacement::Append,
     ) {
         $this->gateway = $gateway;
         $this->serializer = $serializer;
         $this->signatureLocation = $signatureLocation;
 
-        parent::__construct($secret, $algorithm);
+        parent::__construct($secret, $algorithm, $secretPlacement);
     }
 
     /**
@@ -61,6 +62,7 @@ class GenericHmacValidator extends AbstractHmacValidator
         string $signatureField = 'signature',
         string $algorithm = 'sha256',
         string $glue = '',
+        SecretPlacement $secretPlacement = SecretPlacement::Append,
     ): self {
         return new self(
             gateway: $gateway,
@@ -68,6 +70,7 @@ class GenericHmacValidator extends AbstractHmacValidator
             serializer: new ConcatenatedFieldSerializer($fields, $glue),
             signatureLocation: SignatureLocation::field($signatureField),
             algorithm: $algorithm,
+            secretPlacement: $secretPlacement,
         );
     }
 

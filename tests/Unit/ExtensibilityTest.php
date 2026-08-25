@@ -40,7 +40,7 @@ final class ExtensibilityTest extends TestCase
     public function a_new_hmac_gateway_needs_only_a_field_list(): void
     {
         $validator = GenericHmacValidator::forFields(
-            gateway: 'fawry',
+            gateway: 'acmepay',
             secret: self::SECRET,
             fields: ['merchantRefNumber', 'orderAmount', 'orderStatus'],
             signatureField: 'messageSignature',
@@ -56,43 +56,43 @@ final class ExtensibilityTest extends TestCase
         $result = $validator->validate(Payload::fromArray($data));
 
         self::assertTrue($result->isValid(), (string) $result->reason());
-        self::assertSame('fawry', $result->gateway());
+        self::assertSame('acmepay', $result->gateway());
     }
 
     #[Test]
     public function a_new_gateway_slots_into_the_registry_alongside_the_built_in_ones(): void
     {
         $validator = PaymentValidator::fromConfig([])
-            ->register('fawry', GenericHmacValidator::forFields(
-                gateway: 'fawry',
+            ->register('acmepay', GenericHmacValidator::forFields(
+                gateway: 'acmepay',
                 secret: self::SECRET,
                 fields: ['ref', 'amount'],
             ));
 
         $data = ['ref' => 'R1', 'amount' => '10', 'signature' => hash_hmac('sha256', 'R110', self::SECRET)];
 
-        self::assertSame(['fawry'], $validator->gateways());
-        self::assertTrue($validator->isValid('fawry', $data));
+        self::assertSame(['acmepay'], $validator->gateways());
+        self::assertTrue($validator->isValid('acmepay', $data));
     }
 
     #[Test]
     public function the_gateway_factory_can_be_taught_a_new_gateway_for_config_driven_setups(): void
     {
         $factory = (new GatewayFactory())->extend(
-            'fawry',
+            'acmepay',
             static fn (array $config): SignatureValidator => GenericHmacValidator::forFields(
-                gateway: 'fawry',
+                gateway: 'acmepay',
                 secret: (string) $config['secret'],
                 fields: ['ref', 'amount'],
             ),
         );
 
-        $validator = PaymentValidator::fromConfig(['fawry' => ['secret' => self::SECRET]], $factory);
+        $validator = PaymentValidator::fromConfig(['acmepay' => ['secret' => self::SECRET]], $factory);
 
         $data = ['ref' => 'R1', 'amount' => '10', 'signature' => hash_hmac('sha256', 'R110', self::SECRET)];
 
-        self::assertContains('fawry', $factory->supported());
-        self::assertTrue($validator->isValid('fawry', $data));
+        self::assertContains('acmepay', $factory->supported());
+        self::assertTrue($validator->isValid('acmepay', $data));
     }
 
     #[Test]

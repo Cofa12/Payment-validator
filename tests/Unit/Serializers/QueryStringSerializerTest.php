@@ -91,4 +91,52 @@ final class QueryStringSerializerTest extends TestCase
 
         self::assertSame('/?a=1', $serializer->serialize(Payload::fromArray(['a' => 1])));
     }
+
+    #[Test]
+    public function it_can_drop_empty_values_the_way_array_filter_does(): void
+    {
+        // PayTabs' reference implementation runs a bare array_filter() before
+        // hashing, which drops "0" alongside "" — surprising, but it is the rule
+        // the gateway signs by.
+        $serializer = new QueryStringSerializer(sortKeys: true, dropEmpty: true);
+        $payload = Payload::fromArray([
+            'respStatus' => 'A',
+            'respCode' => '0',
+            'token' => '',
+            'zero' => 0,
+            'missing' => null,
+            'declined' => false,
+            'cartId' => 'ORD-1',
+        ]);
+
+        self::assertSame('cartId=ORD-1&respStatus=A', $serializer->serialize($payload));
+    }
+
+    #[Test]
+    public function dropping_empty_values_is_off_by_default(): void
+    {
+        $serializer = new QueryStringSerializer(sortKeys: true);
+        $payload = Payload::fromArray(['a' => '', 'b' => 'x']);
+
+        self::assertSame('a=&b=x', $serializer->serialize($payload));
+    }
+
+    #[Test]
+    public function dropping_empty_values_runs_after_exclusions(): void
+    {
+        $serializer = new QueryStringSerializer(exclude: ['signature'], sortKeys: true, dropEmpty: true);
+        $payload = Payload::fromArray(['signature' => 'abc', 'token' => '', 'cartId' => 'ORD-1']);
+
+        self::assertSame('cartId=ORD-1', $serializer->serialize($payload));
+    }
+
+    #[Test]
+    public function only_mode_ignores_dropping_empty_values(): void
+    {
+        // In `only` mode every requested key must appear, so that removing a
+        // field changes the string instead of silently shifting it.
+        $serializer = new QueryStringSerializer(only: ['a', 'b'], dropEmpty: true);
+
+        self::assertSame('a=&b=x', $serializer->serialize(Payload::fromArray(['b' => 'x'])));
+    }
 }
